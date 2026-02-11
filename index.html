@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="nl-BE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marge-Resilience Score | Homieux Media</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #000887;
+            --pink: #ED51C2;
+            --white: #FFFFFF;
+            --gray-light: #F8F9FA;
+            --border: #E0E0E0;
+        }
+
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        body { 
+            font-family: 'Epilogue', sans-serif; 
+            background: var(--white); 
+            color: #1A1A1A; 
+            margin: 0; 
+            line-height: 1.6;
+            text-align: center; /* Alignement central strict */
+        }
+        
+        header { padding: 50px 20px 20px 20px; }
+        .logo-container img { width: 150px; height: auto; display: block; margin: 0 auto; cursor: pointer; }
+        
+        .container { max-width: 750px; margin: 0 auto; padding: 20px; }
+        
+        .card { 
+            background: var(--white); 
+            border: 1px solid var(--border); 
+            padding: 40px; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 20px rgba(0,8,135,0.04); 
+            text-align: center; 
+        }
+
+        h1 { color: var(--blue); font-size: 28px; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
+        p.subtitle { font-size: 17px; color: #555; margin-bottom: 35px; }
+
+        .btn { 
+            display: inline-block; background: var(--blue); color: white; padding: 18px 30px; 
+            text-decoration: none; border-radius: 2px; font-weight: 600; cursor: pointer; border: none;
+            width: 100%; max-width: 400px; font-size: 16px; transition: opacity 0.2s; 
+            font-family: 'Epilogue', sans-serif; margin: 0 auto;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-pink { background: var(--pink); margin-top: 25px; }
+
+        .sector-context { 
+            background: var(--gray-light); padding: 25px; border-top: 4px solid var(--blue); 
+            font-size: 14px; margin-top: 40px; color: #444; text-align: center;
+        }
+        .sector-tag { font-weight: 800; color: var(--blue); text-transform: uppercase; display: block; margin-bottom: 8px; letter-spacing: 1px; }
+
+        #quiz-container { display: none; }
+        .progress-bar { height: 6px; background: #EEE; margin-bottom: 40px; border-radius: 3px; }
+        .progress-fill { height: 100%; background: var(--pink); width: 0%; transition: width 0.3s ease; }
+        
+        .question-title { font-size: 22px; font-weight: 600; margin-bottom: 35px; color: var(--blue); }
+        .options-list { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .option-btn { 
+            width: 100%; max-width: 500px; padding: 18px; border: 1px solid var(--border); 
+            background: var(--white); cursor: pointer; font-size: 16px; border-radius: 4px;
+            font-family: 'Epilogue', sans-serif; transition: all 0.2s; text-align: center;
+        }
+        .option-btn:hover { border-color: var(--pink); background: #FFF9FC; color: var(--pink); }
+
+        #results-container { display: none; }
+        .score-value { font-size: 64px; font-weight: 800; color: var(--blue); margin: 20px 0; }
+        .board-ready-box { background: var(--blue); color: white; padding: 35px; border-radius: 4px; margin: 30px 0; }
+        .board-ready-text { font-size: 18px; font-style: italic; font-weight: 400; line-height: 1.6; }
+
+        footer { padding: 60px 20px; font-size: 13px; color: #999; }
+        footer a { color: #999; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <a href="https://homieuxmedia.com/">
+            <img src="logo-homieux.png" alt="Homieux Media">
+        </a>
+    </div>
+</header>
+
+<div class="container">
+    <div id="home-screen" class="card">
+        <h1>Marge-Resilience Score</h1>
+        <p class="subtitle">Evalueer de weerbaarheid van uw operationele marges tegen de Belgische economische druk in 2025-2026.</p>
+        <button class="btn" onclick="startQuiz()">Start de analyse</button>
+
+        <div class="sector-context">
+            <span class="sector-tag">📍 Context België 2025-2026</span>
+            De automatische loonindexering in België heeft de arbeidskosten in de private sector in 2024-2025 met gemiddeld 12% doen stijgen, wat een directe druk legt op de operationele marges van KMO's.
+            <br>Bron: Nationale Bank van België (NBB) 2025
+        </div>
+    </div>
+
+    <div id="quiz-container" class="card">
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+        <div id="question-area">
+            <div class="question-title" id="q-text"></div>
+            <div class="options-list" id="q-options"></div>
+        </div>
+    </div>
+
+    <div id="results-container" class="card">
+        <h1>Uw Score Analyse</h1>
+        <div class="score-value" id="final-score">0</div>
+        <p id="result-status" style="font-weight: 800; color: var(--pink); font-size: 20px;"></p>
+
+        <div class="sector-context">
+            <span class="sector-tag">📍 Context België 2025-2026</span>
+            In het eerste kwartaal van 2025 meldde 38% van de Belgische ondernemingen een daling van hun rendabiliteit door de volatiliteit van energieprijzen en grondstofkosten.
+            <br>Bron: FOD Economie 2025
+        </div>
+
+        <div class="board-ready-box">
+            <div class="board-ready-text" id="board-text"></div>
+        </div>
+
+        <div class="sector-context" style="background: white; border: 1px solid var(--border);">
+            <span class="sector-tag">📍 Context België 2025-2026</span>
+            De faillissementsgraad in de bouw- en dienstensector in Vlaanderen is in 2024 met 9% gestegen, voornamelijk bij bedrijven met een beperkte pricing power.
+            <br>Bron: Graydon Belgium 2025
+        </div>
+
+        <a id="cta-button" href="https://calendly.com/homieuxmedia/discovery-call-gratuit-discutons-de-vos-defis" class="btn btn-pink">Bespreek uw casus – 20 min strategische call</a>
+    </div>
+</div>
+
+<footer>
+    © 2026 <a href="https://homieuxmedia.com/">Homieux Media</a> | Marge-Resilience Instrument
+</footer>
+
+<script>
+    const questions = [
+        { q: "Hoe snel kunt u stijgende kosten (loon/energie) doorrekenen aan uw klanten?", opt: [{t:"Onmiddellijk", s:10}, {t:"Na 3-6 maanden", s:5}, {t:"Moeilijk of niet", s:0}] },
+        { q: "Is uw brutomarge per project of per klant in real-time zichtbaar?", opt: [{t:"Ja, volledig", s:10}, {t:"Gedeeltelijk", s:5}, {t:"Nee", s:0}] },
+        { q: "Wat is de impact van een energieprijsstijging van 20% op uw nettowinst?", opt: [{t:"Minimaal", s:10}, {t:"Merkbaar", s:5}, {t:"Kritiek", s:0}] },
+        { q: "Hoeveel van uw omzet hangt af van uw top 3 klanten?", opt: [{t:"Minder dan 20%", s:10}, {t:"Tussen 20% en 50%", s:5}, {t:"Meer dan 50%", s:0}] },
+        { q: "Heeft u een vaste strategie voor prijsverhogingen in 2025-2026?", opt: [{t:"Ja, al uitgevoerd", s:10}, {t:"In voorbereiding", s:5}, {t:"Nee", s:0}] },
+        { q: "Kunt u uw vaste kosten binnen 30 dagen met 10% verlagen indien nodig?", opt: [{t:"Ja", s:10}, {t:"Misschien", s:5}, {t:"Nee", s:0}] },
+        { q: "Maakt u gebruik van AI of automatisering om administratieve kosten te drukken?", opt: [{t:"Structureel", s:10}, {t:"Experimenteel", s:5}, {t:"Nee", s:0}] },
+        { q: "Is er een reservebuffer voor onverwachte loonindexeringen in uw budget?", opt: [{t:"Ja", s:10}, {t:"Beperkt", s:5}, {t:"Nee", s:0}] },
+        { q: "Is uw pricing gebaseerd op 'Cost-Plus' of op 'Toegevoegde Waarde'?", opt: [{t:"Toegevoegde Waarde", s:10}, {t:"Mix", s:5}, {t:"Cost-Plus", s:0}] },
+        { q: "Heeft u alternatieve leveranciers voor uw kritieke componenten?", opt: [{t:"Ja, meerdere", s:10}, {t:"Eén back-up", s:5}, {t:"Nee", s:0}] }
+    ];
+
+    let currentIdx = 0;
+    let totalScore = 0;
+
+    function startQuiz() {
+        document.getElementById('home-screen').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById('q-text').innerText = q.q;
+        const optionsHtml = q.opt.map(o => `<button class="option-btn" onclick="handleAnswer(${o.s})">${o.t}</button>`).join('');
+        document.getElementById('q-options').innerHTML = optionsHtml;
+        document.getElementById('progress').style.width = ((currentIdx / questions.length) * 100) + '%';
+        window.scrollTo(0, 0);
+    }
+
+    function handleAnswer(points) {
+        totalScore += points;
+        currentIdx++;
+        if (currentIdx < questions.length) renderQuestion();
+        else showResults();
+    }
+
+    function showResults() {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results-container').style.display = 'block';
+        document.getElementById('final-score').innerText = totalScore + "/100";
+        window.scrollTo(0, 0);
+
+        let status, insight;
+        if (totalScore >= 80) {
+            status = "🟩 Strategisch Dominant";
+            insight = "Uw marges zijn uitstekend beschermd. U heeft de pricing power om de inflatie voor te blijven.";
+        } else if (totalScore >= 60) {
+            status = "🟨 Veerkrachtig";
+            insight = "De basis is solide, maar optimalisatie van overhead is nodig om de winstgevendheid te borgen.";
+        } else if (totalScore >= 40) {
+            status = "🟧 Kwetsbare Zone";
+            insight = "Uw marges staan onder druk. Externe schokken kunnen uw nettowinst direct bedreigen.";
+        } else {
+            status = "🟥 Kritieke Zone";
+            insight = "Onmiddellijke strategische herpositionering is noodzakelijk om overleving op lange termijn te garanderen.";
+        }
+
+        document.getElementById('result-status').innerText = status;
+        document.getElementById('board-text').innerText = `« ${insight} »`;
+    }
+</script>
+</body>
+</html>
